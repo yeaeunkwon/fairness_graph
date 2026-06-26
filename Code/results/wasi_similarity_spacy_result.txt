@@ -1,0 +1,44 @@
+
+Epoch: 20, learning_rate: 1e-05, training: 13076, valid: 2307
+              precision    recall  f1-score   support
+
+        hate      0.802     0.287     0.423       694
+   offensive      0.564     0.908     0.696       960
+      normal      0.225     0.176     0.197       653
+
+    accuracy                          0.514      2307
+   macro avg      0.530     0.457     0.439      2307
+weighted avg      0.540     0.514     0.472      2307
+
+Epoch: 20, learning_rate: 1e-05, training: 13076, valid: 2307, Threshold: 0.85 
+              precision    recall  f1-score   support
+
+        hate      0.769     0.786     0.777       706
+   offensive      0.603     0.904     0.724       942
+      normal      0.564     0.147     0.233       659
+
+    accuracy                          0.652      2307
+   macro avg      0.645     0.613     0.578      2307
+weighted avg      0.643     0.652     0.600      2307
+
+Epoch: 20, learning_rate: 0.001, training: 13076, valid: 2307, Threshold: 0.9 
+              precision    recall  f1-score   support
+
+        hate      0.813     0.834     0.823       734
+   offensive      0.752     0.810     0.780       904
+      normal      0.666     0.578     0.619       669
+
+    accuracy                          0.750      2307
+   macro avg      0.744     0.741     0.741      2307
+weighted avg      0.747     0.750     0.747      2307
+
+Epoch: 20, learning_rate: 0.001, training: 13076, valid: 2307, Threshold: 0.95 
+              precision    recall  f1-score   support
+
+        hate      0.780     0.836     0.807       725
+   offensive      0.749     0.802     0.774       929
+      normal      0.650     0.533     0.586       653
+
+    accuracy                          0.736      2307
+   macro avg      0.726     0.724     0.722      2307
+weighted avg      0.731     0.736     0.731      2307

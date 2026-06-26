@@ -1,0 +1,11 @@
+
+Epoch: 20, learning_rate: 0.001, training: 13076, valid: 2307, Threshold: 0.85 
+              precision    recall  f1-score   support
+
+        hate      0.810     0.858     0.834       706
+   offensive      0.777     0.839     0.807       925
+      normal      0.709     0.587     0.642       676
+
+    accuracy                          0.771      2307
+   macro avg      0.765     0.762     0.761      2307
+weighted avg      0.767     0.771     0.767      2307
