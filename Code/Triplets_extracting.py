@@ -48,7 +48,7 @@ def preprocess(dataset_folder, dataset_names, output_folder):
     for dataset_name in dataset_names:
         data, test_data, balanced_test_data = dataset_preprocess(dataset_folder, dataset_name)
         logger.info(f"Sample data before saving: {test_data[0]}")
-        save_jsonl(data, os.path.join(output_folder, f"{dataset_name}.jsonl"))
+        save_jsonl(data, os.path.join(output_folder, f"{dataset_name}_nodu.jsonl"))
         save_jsonl(test_data, os.path.join(output_folder, f"test_{dataset_name}.jsonl"))
         save_jsonl(balanced_test_data, os.path.join(output_folder, f"balanced_test_{dataset_name}.jsonl"))
         logger.info(f"Step 0: Dataset {dataset_name} preprocessed and saved to {output_folder}")
