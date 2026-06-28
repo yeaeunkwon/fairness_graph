@@ -101,7 +101,7 @@ def merge_similar_entities(nodes, embeddings, distance_threshold=0.5):
     
 
     for label, cluster_nodes in clusters.items():
-        representative = max(cluster_nodes, key=lambda x: len(x[0]))[0]
+        representative = max(cluster_nodes, key=lambda x: len(x[0]))[0] #the longest name of a node
         for node, _ in cluster_nodes:
             merged_entities[node] = representative
             
@@ -152,14 +152,14 @@ def main():
     parser.add_argument("--model_name", type=str, default="bert-base-uncased",
                         help="The name of the model to use for embedding.")
     parser.add_argument("--folder_path", type=str,
-                        default="Your/path/to/processed_data/text_speech",
+                        default="/media/volume/boot-vol-k-project/Fairness_graph/Code/results",
                         help="The path to the folder containing the dataset.")
     parser.add_argument("--distance_threshold", type=float, default=0.5,
                         help="The distance threshold for clustering.")
-    parser.add_argument("--dataset", type=str, default="toxicspans",
+    parser.add_argument("--dataset", type=str, default="HateXplain",
                         help="The name of the dataset to use. within toxicspans,hatexplain,IHC.")
     parser.add_argument("--output_path", type=str,
-                        default="Your/path/to/save/merged_entities",
+                        default="/media/volume/boot-vol-k-project/Fairness_graph/Code/results",
                         help="The path to the folder to save the merged entities.")
     parser.add_argument("--device", type=str, default="cuda",
                         help="The device to use for embedding.")
