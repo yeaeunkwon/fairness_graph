@@ -15,6 +15,8 @@ from itertools import combinations
 from prompts import GRAPHRAGPROMPT, GRAPHPROMPT_GPT, GRAPH2SHOTSPROMPT
 from promptsv2 import GRAPH2SHOTSPROMPTV2, GRAPHRAGPROMPTV2
 import random
+import re
+import ast
 import torch.backends.cudnn as cudnn
 
 random.seed(42)
@@ -62,13 +64,13 @@ def load_query_dataset(dataset_folder:str, dataset_name:List[str]) -> List[List[
     List[List[str]]: the content and label of the query dataset. position 0 is the content, position 1 is the label.
     '''
     query_dataset = []
-    for name in dataset_name:
-        logger.info(f"The dataset {name} is loading...")
-        data = process_query_dataset(dataset_folder, name)
-        logger.info(f"The dataset {name} is loaded with {len(data)} examples.")
-        query_dataset.extend(data)
-    dataset_names = " ".join(dataset_name)
-    logger.info(f"The query dataset is loaded from {dataset_names} with {len(query_dataset)} examples.")
+    name=dataset_name
+    logger.info(f"The dataset {name} is loading...")
+    data = process_query_dataset(dataset_folder, name)
+    logger.info(f"The dataset {name} is loaded with {len(data)} examples.")
+    query_dataset.extend(data)
+    #dataset_names = " ".join(dataset_name)
+    logger.info(f"The query dataset is loaded from {dataset_name} with {len(query_dataset)} examples.")
     return query_dataset
 
 def set_faiss_index(embeddings:List[List[float]]) -> faiss.Index:
@@ -229,7 +231,7 @@ def subgraph_search(graph:nx.Graph, query:List[str]) -> nx.reportviews.EdgeView:
     nx.Graph: A minimized connecting subgraph.
     '''
     minimized_subgraph = nx.Graph()
-    valid_nodes = [node for node in query if node in graph.nodes]
+    valid_nodes = [node for node in query if node in graph.nodes]# the most similar nodes
     if len(valid_nodes) == 1:
         # if the query is a single node, return the node and its neighbors.
         neighbors = list(graph.neighbors(valid_nodes[0]))
@@ -407,27 +409,37 @@ def print_detailed_metrics(predictions, labels, probs):
         logger.info(f"  Precision: {p}")
         logger.info(f"  Recall: {r}")
 
+def parse_triplet_string(s):
+    s = s.strip().strip("[]")
+    out = []
+    for m in re.findall(r"\(([^()]*)\)", s):
+        parts = [p.strip() for p in m.split(",")]
+        if len(parts) >= 3:
+            out.append((parts[0], parts[1], ", ".join(parts[2:])))
+    return out
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset_folder", type=str, required=True, help="the folder of the query dataset")
-    parser.add_argument("--dataset_name", type=str, nargs="+", required=True, help="the name of the query dataset")
-    parser.add_argument("--bert_model_path", type=str, required=True, help="the path of the bert model")
-    parser.add_argument("--model_name", type=str, required=True, help="the name of the LLM model")
-    parser.add_argument("--device_llm", type=str, default="cpu", help="the device to run the LLM")
-    parser.add_argument("--device_bert", type=str, default="cpu", help="the device to run the BERT")
-    parser.add_argument("--triplets", type=str, nargs="+", required=True, help="the path of the triplets file")
-    parser.add_argument("--nodes_embeddings", type=str, required=True, nargs="+", help="the path of the nodes embeddings file")
-    parser.add_argument("--batch_size", type=int, default=8, help="the batch size")
-    parser.add_argument("--which_prompt", type=str, default="graph", help="the prompt to use")
-    parser.add_argument("--end_with", type=str, default="", help="the suffix of the output file")
-    parser.add_argument("--which_NER_prompt", type=str, default="NER1", help="the prompt to use for NER, allow NER1, NER2, NER3, NER4.")
+    parser.add_argument("--dataset_folder", type=str, default="/media/volume/boot-vol-k-project/Fairness_graph/Code/results/")
+    parser.add_argument("--dataset_name", type=str, default="balanced_HateXplain")
+    parser.add_argument("--bert_model_path", type=str,  default="bert-base-uncased",help="the path of the bert model")
+    parser.add_argument("--model_name", type=str,  default="Qwen/Qwen2.5-14B-Instruct")
+    parser.add_argument("--device_llm", type=str, default="cuda", help="the device to run the LLM")
+    parser.add_argument("--device_bert", type=str, default="cuda", help="the device to run the BERT")
+    parser.add_argument("--triplets", type=str, nargs="+",  default="/media/volume/boot-vol-k-project/Fairness_graph/Code/results/HateXplain_merged_triplets.json")
+    parser.add_argument("--nodes_embeddings", type=str,  default="/media/volume/boot-vol-k-project/Fairness_graph/Code/results/HateXplain_nodes_embeddings.json")
+    parser.add_argument("--batch_size", type=int, default=1, help="the batch size")
+    parser.add_argument("--which_prompt", type=str, default="graph2shots", help="the prompt to use")
+    parser.add_argument("--end_with", type=str, default="filterrank", help="the suffix of the output file")
+    parser.add_argument("--which_NER_prompt", type=str, default="NER3", help="the prompt to use for NER, allow NER1, NER2, NER3, NER4.")
     parser.add_argument("--which_search", type=str, default="subgraph", help="the search method to use, allow subgraph and n_hop.")
     parser.add_argument("--n_hop", type=int, default=1, help="the number of hops to search")
-    parser.add_argument("--threshold", type=float, default=0.7, help="the threshold of the similarity score, the larger, the more strict.")
+    parser.add_argument("--threshold", type=float, default=0.5, help="the threshold of the similarity score, the larger, the more strict.")
     parser.add_argument("--top_k", type=int, default=2, help="the number of the most similar nodes to the query")
     parser.add_argument("--is_filter", type=str, default="False", help="whether to filter the triplets based on the similarity score")
-    parser.add_argument("--is_rerank", type=str, default="False", help="whether to rerank the triplets based on the similarity score, if rerank, filter is included.")
+    parser.add_argument("--is_rerank", type=str, default="True", help="whether to rerank the triplets based on the similarity score, if rerank, filter is included.")
     parser.add_argument("--rerank_threshold", type=float, default=0.5, help="the threshold of the similarity score, the larger, the more strict.")
+   
     args = parser.parse_args()
 
     # step 0: load the query dataset.
@@ -436,12 +448,11 @@ def main():
     # query_texts, labels = zip(*query_dataset)
 
     triplets = []
-    triplet_files = " ".join(args.triplets)
-    logger.info(f"The triplets are loading from {triplet_files}...")
-    for triplet_file in args.triplets:
-        with open(triplet_file, "r") as f:
-            data = json.load(f)
-            triplets.extend(data["triplets"])
+    logger.info(f"The triplets are loading from {args.triplets}...")
+    with open(args.triplets, "r") as f:
+        data = json.load(f)
+        triplets.extend(data["triplets"])
+    logger.info(f"triplet dataset: {triplets[0]}")
     
     # step 1: build the graph from the triplets
     graph = build_graph(triplets)
@@ -449,12 +460,11 @@ def main():
 
     # step 2: load the embedding of the nodes.
     nodes_embeddings = []
-    nodes_embedding_files = " ".join(args.nodes_embeddings)
-    logger.info(f"The nodes embeddings are loading from {nodes_embedding_files}...")
-    for nodes_embedding_file in args.nodes_embeddings:
-        with open(nodes_embedding_file, "r") as f:
-            data = json.load(f)
-            nodes_embeddings.extend(data)
+ 
+    with open(args.nodes_embeddings, "r") as f:
+        data = json.load(f)
+        nodes_embeddings.extend(data)
+    logger.info(f"node_embedding: {nodes_embeddings[0]}")
     logger.info(f"The nodes embeddings are loaded.")
 
     # unzipped the nodes_embeddings
@@ -500,6 +510,7 @@ def main():
                     query_entities: List[str] = NER_LLM_4(query_text, model, tokenizer)
                 case _:
                     raise ValueError(f"The NER prompt {args.which_NER_prompt} is not supported.")
+            logger.info(f"text: {query_text}, label:{label}, extracted entities: {query_entities}")
             query_entity_count.append(len(query_entities))
             all_entitiess.append(query_entities)
             if len(query_entities) > 10:
@@ -559,12 +570,14 @@ def main():
                 indices = []
 
             most_similar_nodes = []
-            original_nodes = nodes 
+            original_nodes = nodes # all training nodes
+            logger.info(f"nodes : {len(nodes)}, {indices}")
             for indice in indices:
                 mapped_nodes = mapping_indices_to_nodes(indice, original_nodes)
                 most_similar_nodes.extend(mapped_nodes)
 
             most_similar_nodes = list(set(most_similar_nodes))
+            logger.info(f"nodes : {len(most_similar_nodes)}")
             # very important. The LLM is sensitive to the order of the nodes input.
             # without sorting, the performance will be unstable.
             most_similar_nodes.sort()  
@@ -663,6 +676,11 @@ def main():
         with open(args.dataset_folder + f"/{args.dataset_name}_predictions_{args.end_with}.jsonl", "w") as f:
             for prediction, label, entity_count, entities, query_result, retrieved_nodes in zip(predictions, labels, query_entity_count, all_entitiess, all_query_results, all_retrieved_nodes):
                 f.write(json.dumps({"prediction": prediction, "label": label, "entity_count": entity_count, "entities": entities, "query_result": query_result,"retrieved_nodes": retrieved_nodes}) + "\n")
+    
+    with open("results_config.txt", "a") as f:
+            f.write(f"{args.dataset_name}_predictions_{args.end_with}.jsonl\n")
+            for key, value in vars(args).items():
+                f.write(f"{key}: {value}\n") 
     logger.info(f"The predictions are saved to {args.dataset_folder}/{args.dataset_name}_predictions_{args.end_with}.jsonl")
 
     print_detailed_metrics(predictions, labels, all_probs)

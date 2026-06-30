@@ -1,0 +1,73 @@
+balanced_HateXplain_predictions_.jsonl
+dataset_folder: /media/volume/boot-vol-k-project/Fairness_graph/Code/results/
+dataset_name: balanced_HateXplain
+bert_model_path: bert-base-uncased
+model_name: Qwen/Qwen2.5-14B-Instruct
+device_llm: cuda
+device_bert: cuda
+triplets: /media/volume/boot-vol-k-project/Fairness_graph/Code/results/HateXplain_merged_triplets.json
+nodes_embeddings: /media/volume/boot-vol-k-project/Fairness_graph/Code/results/HateXplain_nodes_embeddings.json
+batch_size: 1
+which_prompt: graph2shots
+end_with: 
+which_NER_prompt: NER3
+which_search: subgraph
+n_hop: 1
+threshold: 0.5
+top_k: 2
+is_filter: False
+is_rerank: False
+rerank_threshold: 0.5
+2026-06-29 13:07:55,038 - Query - INFO - Overall Metrics:
+2026-06-29 13:07:55,038 - Query - INFO - Accuracy: 0.6542
+2026-06-29 13:07:55,038 - Query - INFO - Macro F1: 0.6397
+2026-06-29 13:07:55,038 - Query - INFO - Macro Precision: [0.5        0.49996448 0.5        ... 1.         1.         1.        ]
+2026-06-29 13:07:55,038 - Query - INFO - Macro Recall: [1.00000000e+00 9.99857914e-01 9.99857914e-01 ... 7.10429099e-04
+ 4.26257460e-04 0.00000000e+00]
+2026-06-29 13:07:55,038 - Query - INFO - PR AUC: 0.76784
+2026-06-29 13:07:55,039 - Query - INFO - 
+Per-class Metrics:
+2026-06-29 13:07:55,039 - Query - INFO - Class 0:
+2026-06-29 13:07:55,039 - Query - INFO -   F1: 0.5672
+2026-06-29 13:07:55,039 - Query - INFO -   Precision: 0.758
+2026-06-29 13:07:55,039 - Query - INFO -   Recall: 0.4531
+2026-06-29 13:07:55,039 - Query - INFO - Class 1:
+2026-06-29 13:07:55,039 - Query - INFO -   F1: 0.7121
+2026-06-29 13:07:55,039 - Query - INFO -   Precision: 0.61
+2026-06-29 13:07:55,039 - Query - INFO -   Recall: 0.8554
+balanced_HateXplain_predictions_filterrank.jsonl
+dataset_folder: /media/volume/boot-vol-k-project/Fairness_graph/Code/results/
+dataset_name: balanced_HateXplain
+bert_model_path: bert-base-uncased
+model_name: Qwen/Qwen2.5-14B-Instruct
+device_llm: cuda
+device_bert: cuda
+triplets: /media/volume/boot-vol-k-project/Fairness_graph/Code/results/HateXplain_merged_triplets.json
+nodes_embeddings: /media/volume/boot-vol-k-project/Fairness_graph/Code/results/HateXplain_nodes_embeddings.json
+batch_size: 1
+which_prompt: graph2shots
+end_with: filterrank
+which_NER_prompt: NER3
+which_search: subgraph
+n_hop: 1
+threshold: 0.5
+top_k: 2
+is_filter: False
+is_rerank: True
+rerank_threshold: 0.5
+2026-06-30 16:52:33,411 - Query - INFO - Overall Metrics:
+2026-06-30 16:52:33,411 - Query - INFO - Accuracy: 0.6554
+2026-06-30 16:52:33,411 - Query - INFO - Macro F1: 0.6408
+2026-06-30 16:52:33,411 - Query - INFO - Macro Precision: [0.5        0.50003552 0.50035547 ... 1.         1.         1.        ]
+2026-06-30 16:52:33,412 - Query - INFO - Macro Recall: [1.         1.         1.         ... 0.00227337 0.00113669 0.        ]
+2026-06-30 16:52:33,412 - Query - INFO - PR AUC: 0.76938
+2026-06-30 16:52:33,412 - Query - INFO - 
+Per-class Metrics:
+2026-06-30 16:52:33,412 - Query - INFO - Class 0:
+2026-06-30 16:52:33,412 - Query - INFO -   F1: 0.5684
+2026-06-30 16:52:33,412 - Query - INFO -   Precision: 0.7605
+2026-06-30 16:52:33,412 - Query - INFO -   Recall: 0.4538
+2026-06-30 16:52:33,412 - Query - INFO - Class 1:
+2026-06-30 16:52:33,412 - Query - INFO -   F1: 0.7133
+2026-06-30 16:52:33,412 - Query - INFO -   Precision: 0.6108
+2026-06-30 16:52:33,412 - Query - INFO -   Recall: 0.8571

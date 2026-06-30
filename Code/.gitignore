@@ -1,1 +1,6 @@
 /results/HateXplain_nodes_embeddings.json
+/results/HateXplain_merged_entities.json
+/results/HateXplain_merged_triplets.json
+*.json
+*.jsonl
+*.pt

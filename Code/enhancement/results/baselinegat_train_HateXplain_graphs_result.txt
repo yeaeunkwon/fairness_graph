@@ -1,0 +1,10 @@
+
+Epoch: 30, learning_rate: 1e-05, batch_size: 32, training: 432, valid: 54
+              precision    recall  f1-score   support
+
+    not hate       0.64      0.60      0.62      1401
+        hate       0.74      0.77      0.75      2050
+
+    accuracy                           0.70      3451
+   macro avg       0.69      0.69      0.69      3451
+weighted avg       0.70      0.70      0.70      3451

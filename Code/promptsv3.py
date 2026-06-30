@@ -16,7 +16,7 @@ Example 2:
 These elements work together to incite class-based hatred and division.
 
 <USER>: New Context: {context}
-<ASSISTANT>: Analysis: Let me identify the specific hateful elements in this message:"""
+<ASSISTANT>: Analysis: """
 
 
 TRIPLETPROMPTV3 = '''<USER>: You are a helpful AI assistant specialized in extracting relationship triplets from text and its analysis. Your task is to identify triplets that indicate hate or bias, using both the original context and its analysis.

@@ -135,7 +135,7 @@ def save_merged_results(merged_triplets, output_path, dataset):
         "triplets": merged_triplets
     }
     
-    output_file = f"{output_path}/{dataset}_merged_triplets.json"
+    output_file = f"{output_path}/{dataset}_merged_triplets_0.7.json"
     with open(output_file, "w") as f:
         json.dump(output_data, f, indent=4)
     logger.info(f"Merged triplets saved to {output_file}")
@@ -154,7 +154,7 @@ def main():
     parser.add_argument("--folder_path", type=str,
                         default="/media/volume/boot-vol-k-project/Fairness_graph/Code/results",
                         help="The path to the folder containing the dataset.")
-    parser.add_argument("--distance_threshold", type=float, default=0.5,
+    parser.add_argument("--distance_threshold", type=float, default=0.7,
                         help="The distance threshold for clustering.")
     parser.add_argument("--dataset", type=str, default="HateXplain",
                         help="The name of the dataset to use. within toxicspans,hatexplain,IHC.")
@@ -200,9 +200,9 @@ def main():
             json.dump(merged_entities, f, indent=4)
         logger.info(f"Merged entities saved to {args.output_path}/merged_3dataset_merged_entities.json")
     else:
-        with open(f"{args.output_path}/{args.dataset}_merged_entities.json", "w") as f:
+        with open(f"{args.output_path}/{args.dataset}_merged_entities_0.7.json", "w") as f:
             json.dump(merged_entities, f, indent=4)
-        logger.info(f"Merged entities saved to {args.output_path}/{args.dataset}_merged_entities.json")
+        logger.info(f"Merged entities saved to {args.output_path}/{args.dataset}_merged_entities_0.7.json")
 
     res_nodes = [triplet[0] for triplet in merged_triplets]
     res_nodes.extend([triplet[2] for triplet in merged_triplets])
@@ -215,9 +215,9 @@ def main():
             json.dump(to_save, f, indent=4)
         logger.info(f"Merged nodes embeddings saved to {args.output_path}/merged_3dataset_nodes_embeddings.json")
     else:
-        with open(f"{args.output_path}/{args.dataset}_nodes_embeddings.json", "w") as f:
+        with open(f"{args.output_path}/{args.dataset}_nodes_embeddings_0.7.json", "w") as f:
             json.dump(to_save, f, indent=4)
-        logger.info(f"Merged nodes embeddings saved to {args.output_path}/{args.dataset}_nodes_embeddings.json")
+        logger.info(f"Merged nodes embeddings saved to {args.output_path}/{args.dataset}_nodes_embeddings_0.7.json")
 
 
 if __name__ == "__main__":
